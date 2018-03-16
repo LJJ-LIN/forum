@@ -19,9 +19,16 @@
           	<li><a href="/article/list/{{ b.id }}"> {{ b.name }}</a></li>
           <li class="active">发表文章</li>
       </ol>
-      <form >
-          <span style="font-size: 18px;" >标题:</span>  <input type="text" class="form-control"><br>
-          <span style="font-size: 18px;" >内容:</span>  <textarea class="form-control"></textarea><br>
+      {% for field in form %}
+       {% if field.errors %}
+         {%  for error in field.errors %}
+            <div class="alert alert-danger">{{ field.label }}: {{ error }}</div>
+         {% endfor %}
+        {%  endif %}
+      {% endfor %} 
+      <form action="/article/create/{{ b.id }}" method="post"> {% csrf_token %}
+          <span style="font-size: 18px;" >标题:</span>  <input type="text" class="form-control" name="title" value="{{ form.title.value }}" ><br>
+          <span style="font-size: 18px;" >内容:</span>  <textarea class="form-control" name="content" >{{ form.content.value }}</textarea><br>
           <input type="submit" value="发表"  class="btn btn-primary">
 	 </form>
 </div>
