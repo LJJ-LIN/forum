@@ -4,6 +4,7 @@ from block.models import Block
 from article.forms import ArticleForm
 from django.views.generic import View,DetailView
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 class ArticleCreateView(View):
 
@@ -19,14 +20,17 @@ class ArticleCreateView(View):
 
 	def  post(self,request,block_id):
 		self.init_data(block_id)
+		user = request.POST.get("username")
+		owner = User.objects.get(username=user)
 		form = ArticleForm(request.POST)
 		if form.is_valid():
 			article = form.save(commit=False)
+			article.owner = owner
 			article.block = self.block
 			article.status = 0
 			article.save()
 			form.save_m2m()
-			return redirect("/article/list/%s"  %self.block_id)
+			return redirect("/article/list/%s?page_no=1"  %self.block_id)
 		else:
 			return render(request,self.template_name,{"b":self.block,"form":form})
 
@@ -45,7 +49,7 @@ def article_list(request, block_id):
 	page_no = request.GET.get('page_no')
 	page = p.page(page_no)
 	article_objs = page.object_list
-	return render(request,"article_list.html",{"articles":page,"b":block,"all":article_objs})
+	return render(request,"article_list.html",{"articles":page,"b":block})
 
 
 

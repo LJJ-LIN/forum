@@ -17,9 +17,15 @@ from django.conf.urls import url,include
 from django.contrib import admin
 import django
 import  view
+from activate.views import activate
+from django.contrib.auth import urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^article/',include('article.urls')),
+    url(r'^register/',view.register),
     url(r'^$', view.index),
+    url(r'^activate/(?P<code>\w+)$',activate),
+    url(r'^accounts/',include('django.contrib.auth.urls')),
+    url(r'^',view.notfound),
 ]
