@@ -5,6 +5,7 @@ from article.forms import ArticleForm
 from django.views.generic import View,DetailView
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 class ArticleCreateView(View):
 
@@ -20,7 +21,7 @@ class ArticleCreateView(View):
 
 	def  post(self,request,block_id):
 		self.init_data(block_id)
-		user = request.POST.get("username")
+		user = request.POST["username"]
 		owner = User.objects.get(username=user)
 		form = ArticleForm(request.POST)
 		if form.is_valid():
@@ -34,6 +35,11 @@ class ArticleCreateView(View):
 		else:
 			return render(request,self.template_name,{"b":self.block,"form":form})
 
+	
+
+
+
+			
 class ArticleDetailView(DetailView):
 	model = Article
 	template_name = 'article_detail.html'
@@ -45,7 +51,7 @@ def article_list(request, block_id):
 	block_id = int(block_id)
 	block = Block.objects.get(id=block_id)
 	all_articles = Article.objects.filter(block=block,status=0).order_by("-id")
-	p = Paginator(all_articles,1)
+	p = Paginator(all_articles,3)
 	page_no = request.GET.get('page_no')
 	page = p.page(page_no)
 	article_objs = page.object_list

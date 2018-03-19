@@ -18,7 +18,7 @@ from django.contrib import admin
 import django
 import  view
 from activate.views import activate
-from django.contrib.auth import urls
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,5 +27,5 @@ urlpatterns = [
     url(r'^$', view.index),
     url(r'^activate/(?P<code>\w+)$',activate),
     url(r'^accounts/',include('django.contrib.auth.urls')),
-    url(r'^',view.notfound),
+    # url(r'^',view.notfound),
 ]
