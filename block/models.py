@@ -1,10 +1,21 @@
 from django.db import models
 
+class DeletedCommentManager(models.Manager):
+	def get_queryset(self):
+		return super().get_queryset().filter(status=-1)
+
+class CommentManager(models.Manager):
+	def get_queryset(self):
+		return super().get_queryset().filter(status=0)
+
 class Block(models.Model):
+	objects = models.Manager()   #默认的
+	normal_objects = CommentManager()
+	deleted_objects = DeletedCommentManager()
 	name = models.CharField("板块名称",max_length=100)
 	desc = models.CharField("板块描述",max_length=100)
 	manager_name = models.CharField("板块管理员名称",max_length=100)
-	status = models.IntegerField("状态",choices=((0,"正常"),(-1,"删除")),default=0)
+	status = models.IntegerField("状态",choices=((0,"正常"),(-1,"删除")))
 
 
 	def __str__(self):

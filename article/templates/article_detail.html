@@ -3,6 +3,42 @@
 	<meta charset="UTF-8">
 	<title>文章详情页</title>
 	<link rel="stylesheet"  href="/static/css/bootstrap.min.css" />
+   <style type="text/css">
+    .mainTable td.author{
+        width: 10%;
+    }
+    .mainTable td.content{
+        width:87%;
+    }
+    blockquote{
+        font-size: 13px;
+    }
+    img{
+        max-width: 200px;
+    }
+    </style>
+    <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="http://www.ziqiangxuetang.com/media/django/csrf.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    		var article_id = {{ article.id }};
+    		var page_cnt = {{ pagination_data.page_cnt }};
+
+    		$("#commentBtn").click(function () {
+    			var comment = $("#commentContent").val();
+    			var param = {"article_id": article_id, "content": comment};
+    			$.post("comment/create/", param, function (data) {
+    				var ret = JSON.parse(data);
+    			          if (ret["status"] == "ok") {
+    			          	$("#commentContent").val("");
+    			          	 window.location.href = "/article/articledetail/{{ article.id }}?page_no="+(page_cnt+1);
+    			          	} else {
+    			          		alert(ret["msg"]);
+                                           }
+        });
+      })
+    });
+    </script>
 </head>
 <body>
 	<div class="container">
@@ -15,24 +51,78 @@
   	</div>
   	<ol class="breadcrumb">
           	<li><a href="/">首页</a></li>
-          	<li><a href="/article/list/{{ a.block.id }}?page_no=1">{{ a.block.name }}</a></li>
-          	<li class="active"> {{ a.title }}</li> 
+          	<li><a href="/article/list/{{ article.block.id }}">{{ article.block.name }}</a></li>
+          	<li class="active"> {{ article.title }}</li> 
           </ol>
-          
-          <div class="row">
-           <div class="col-md-12 col-xs-12">
-              <div class="page-header">
-          	   <center><h3>{{ a.title }}</h3></center>
-          	   </div>
-          	 </div>
-          </div>
-	<h4>内容:</h4>
-	<div class="row">
-	  <div class="col-md-12 col-xs-12">	
-	   <div class="navbar-text"> <h4>{{ a.content }}</h4></div>
-	   </div>
-	</div>
-	  
+
+     <table class="table table-bordered">
+        <tr>
+            <td style="width: 200px">
+                作者:{{ article.owner.username }}
+            </td>
+            <td>
+                <h2>{{ article.title }}</h2>
+                {% autoescape off %}
+                <div>{{ article.content }}</div>
+                {% endautoescape %}
+            </td>
+        </tr>
+    	{% for comment in comments %}
+            <tr>
+                <td style="width: 200px">
+                    读者：{{ comment.owner.username }}
+                </td>
+                <td>
+                    {{ comment.content|linebreaksbr }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <center>
+    <nav aria-label = "Page navigation">
+     <ul class="pagination">
+           {% if not  pagination_data.has_previous %}
+           <li><a href="?page_no=1">首页</a></li>
+    	<li>
+    		<a href="?page_no={{ pagination_data.previous_link }}" aria-label="Previous"><span >&laquo;</span></a>
+    	</li>
+    	{% endif %}
+
+    	{%  for no in pagination_data.page_links %}
+    	 {% ifequal no pagination_data.current_no %}
+    	<li class="active"><a href="?page_no={{ no }}">{{ no }}</a></li>
+    	 {% else %}
+    	  <li><a href="?page_no={{ no }}">{{ no }}</a></li>
+    	 {%  endifequal %}
+    	{%  endfor %}
+
+    	{% if not pagination_data.has_next %}
+    	<li>
+    		<a href="?page_no={{ pagination_data.next_links }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    	</li>
+    	<li><a aria-hidden = "true" href="?page_no={{ pagination_data.page_cnt }}">尾页</a></li>
+    	{%  endif %}
+    	</ul>
+    </nav>
+    </center>
+
+    <table id="replyRegion" class="table mainTable">
+        <tr>
+            <td class="author">
+                <br />
+                <center>读者：{{ user.username }}</center>
+            </td>
+            <td class="content">
+                <textarea class="form-control" id="commentContent" rows="3"> </textarea>
+                <br />
+                <button class="btn btn-primary" id="commentBtn">发表评论</button>
+                <br />
+                <br />
+            </td>
+        </tr>
+    </table>
+
 </div>
 </body>
 </html>

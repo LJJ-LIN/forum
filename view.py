@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 
 def index(request):
-	block_infos = Block.objects.filter(status=0).order_by("-id")
+	block_infos = Block.normal_objects.order_by("-id")
 	return render(request,"index.html",{"blocks":block_infos})
 
 def  register(request):
