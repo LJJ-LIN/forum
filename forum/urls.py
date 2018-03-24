@@ -27,5 +27,8 @@ urlpatterns = [
     url(r'^$', view.index),
     url(r'^activate/(?P<code>\w+)$',activate),
     url(r'^accounts/',include('django.contrib.auth.urls')),
+    url(r'message/',include('message.urls')),
     # url(r'^',view.notfound),
 ]
+
+admin.site.disable_action('delete_selected')

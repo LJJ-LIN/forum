@@ -23,10 +23,17 @@
     	$(document).ready(function() {
     		var article_id = {{ article.id }};
     		var page_cnt = {{ pagination_data.page_cnt }};
+    		var to_comment_id = 0;
+
+    		$(".replyBtn").click(function(e){
+    			to_comment_id = parseInt($(e.target).attr("data-id"));
+    			$("#commentContent").focus();
+    			return false;
+    		});
 
     		$("#commentBtn").click(function () {
     			var comment = $("#commentContent").val();
-    			var param = {"article_id": article_id, "content": comment};
+    			var param = {"article_id": article_id, "content": comment, "to_comment_id": to_comment_id, "to_comment_id": to_comment_id};
     			$.post("comment/create/", param, function (data) {
     				var ret = JSON.parse(data);
     			          if (ret["status"] == "ok") {
@@ -70,42 +77,26 @@
     	{% for comment in comments %}
             <tr>
                 <td style="width: 200px">
-                    读者：{{ comment.owner.username }}
+                    作者：{{ comment.owner.username }}
                 </td>
                 <td>
+                <a href="#replyRegion" data-id="{{ comment.id }}" class="replyBtn btn btn-primary pull-right">
+                        回复
+                    </a>
+                    {% if comment.to_comment %}
+                    <blockquote>
+                   <b>{{ comment.to_comment.owner.username }}:</b>
+                   <br />
+                   {{ comment.to_comment.content|linebreaksbr }}
+                    </blockquote>
+                   {% endif %}
                     {{ comment.content|linebreaksbr }}
-                </td>
             </tr>
         {% endfor %}
+
     </table>
-
-    <center>
-    <nav aria-label = "Page navigation">
-     <ul class="pagination">
-           {% if not  pagination_data.has_previous %}
-           <li><a href="?page_no=1">首页</a></li>
-    	<li>
-    		<a href="?page_no={{ pagination_data.previous_link }}" aria-label="Previous"><span >&laquo;</span></a>
-    	</li>
-    	{% endif %}
-
-    	{%  for no in pagination_data.page_links %}
-    	 {% ifequal no pagination_data.current_no %}
-    	<li class="active"><a href="?page_no={{ no }}">{{ no }}</a></li>
-    	 {% else %}
-    	  <li><a href="?page_no={{ no }}">{{ no }}</a></li>
-    	 {%  endifequal %}
-    	{%  endfor %}
-
-    	{% if not pagination_data.has_next %}
-    	<li>
-    		<a href="?page_no={{ pagination_data.next_links }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-    	</li>
-    	<li><a aria-hidden = "true" href="?page_no={{ pagination_data.page_cnt }}">尾页</a></li>
-    	{%  endif %}
-    	</ul>
-    </nav>
-    </center>
+    
+    {% include 'paginator.html' %}
 
     <table id="replyRegion" class="table mainTable">
         <tr>

@@ -7,10 +7,12 @@ import uuid
 import datetime
 from django.core.mail import send_mail
 from django.utils import timezone
+from message.models import UserMessage
 
 def index(request):
 	block_infos = Block.normal_objects.order_by("-id")
-	return render(request,"index.html",{"blocks":block_infos})
+	msg_cnt = UserMessage.objects.filter(owner=request.user,status=0).count()
+	return render(request,"index.html",{"blocks":block_infos,"msg_cnt":msg_cnt})
 
 def  register(request):
 	error = ""

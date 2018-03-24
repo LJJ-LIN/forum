@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
+from message.models import UserMessage
 
 #创建文章
 class ArticleCreateView(View):
@@ -54,11 +55,21 @@ class ArticleDetailView(DetailView):
 def create_comment(request):
 	article_id = int(request.POST['article_id'])
 	article = Article.normal_objects.get(id = article_id)
+	to_comment_id = int(request.POST.get("to_comment_id",0))
 	form = CommentForm(request.POST)
+	if to_comment_id != 0:
+		to_comment = Comment.objects.get(id=to_comment_id)
+		new_msg = UserMessage(owner = to_comment.owner,content="有人回复了你的评论'%s' " %to_comment.content[:30], link="/article/articledetail/%s" %article_id, status=0)
+		new_msg.save()
+	else:
+		to_comment = None
+		new_msg = UserMessage(owner = article.owner,content="有人评论了你的文章《%s》" %article.title, link="/article/articledetail/%s" %article_id, status=0)
+		new_msg.save()
 	if form.is_valid():
 		comment = form.save(commit=False)
 		comment.owner = request.user
 		comment.article = article
+		comment.to_comment = to_comment
 		comment.status = 0
 		comment.save()
 		status = "ok"

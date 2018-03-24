@@ -35,6 +35,10 @@
             <div class="well">
             {% if user.is_authenticated %}
             <p>{{ user.username }}，欢迎来到论坛.</p>
+            {% if msg_cnt %}
+            <a href="/message/list"><span class="badge">{{ msg_cnt }}</span></a>
+            {% endif %}
+            
             <a href="/accounts/logout">登出</a>&nbsp;&nbsp;
             <a href="/accounts/password_change/">修改密码</a>
             {% else %}

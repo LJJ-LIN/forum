@@ -42,6 +42,7 @@ class  Comment(models.Model):
 	article = models.ForeignKey(Article,verbose_name="文章ID")
 	content = models.CharField("评论",max_length=10000)
 	status = models.IntegerField("状态",choices=((0,"正常"),(-1,"删除")))
+	to_comment = models.ForeignKey("self",null=True,blank=True,verbose_name="被回复评论")
 	create_timestamp = models.DateTimeField("创建时间",auto_now_add=True)
 	last_update_timestamp = models.DateTimeField("最后更新事件",auto_now=True)
 
