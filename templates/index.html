@@ -34,6 +34,12 @@
             </div>
             <div class="well">
             {% if user.is_authenticated %}
+             {% if user.userprofile.avatar %}
+             <img src="{{ user.userprofile.avatar }}"  style="width: 150px; width: 100px;" alt="头像">
+             <a href="/usercenter/uploadavatar/">换头像</a>
+             {% else %}
+               <a href="/usercenter/uploadavatar/">你还没有头像，去上传</a>
+             {% endif %}
             <p>{{ user.username }}，欢迎来到论坛.</p>
             {% if msg_cnt %}
             <a href="/message/list"><span class="badge">{{ msg_cnt }}</span></a>

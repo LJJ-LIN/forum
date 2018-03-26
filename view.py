@@ -11,7 +11,10 @@ from message.models import UserMessage
 
 def index(request):
 	block_infos = Block.normal_objects.order_by("-id")
-	msg_cnt = UserMessage.objects.filter(owner=request.user,status=0).count()
+	if request.user.is_authenticated():
+			msg_cnt = UserMessage.objects.filter(owner=request.user,status=0).count()
+	else:
+			msg_cnt = 0
 	return render(request,"index.html",{"blocks":block_infos,"msg_cnt":msg_cnt})
 
 def  register(request):

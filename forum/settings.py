@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'article.apps.ArticleAPPConfig',
     'activate',
     'block.apps.BlockAPPConfig',
-    'message',
+    'message','userCenter',
 ]
 
 MIDDLEWARE = [

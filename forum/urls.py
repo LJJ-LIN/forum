@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^activate/(?P<code>\w+)$',activate),
     url(r'^accounts/',include('django.contrib.auth.urls')),
     url(r'message/',include('message.urls')),
+    url(r'usercenter/', include('userCenter.urls')),
     # url(r'^',view.notfound),
 ]
 
