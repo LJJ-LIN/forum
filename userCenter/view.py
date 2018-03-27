@@ -13,7 +13,7 @@ def upload_avatar(request):
 		with open(file_path, 'wb+') as destination:
 			for chunk in avatar_file.chunks():
 				destination.write(chunk)
-		url = "http://localhost/avatar/%s"  % avatar_file.name
+		url = "http://res.myforum.com/avatar/%s"  % avatar_file.name
 		profile.avatar = url
 		profile.save()
 		return redirect("/")

@@ -27,9 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-STATICFILES_DIRS = (
-                os.path.join(BASE_DIR,"static"),
-    )
+MEDIA_ROOT = "d:/python/workspace/forum/avatar/"
+MEDIA_URL = "http://res.myforum.com/avatar/"
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),
+                    os.path.join(BASE_DIR, 'DjangoUeditor/static'))
 
 # Application definition
 
