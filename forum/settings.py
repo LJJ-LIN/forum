@@ -127,6 +127,57 @@ LOGIN_REDIRECT_URL = "/"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+
+
+import configparser
+config = configparser.ConfigParser()
+config_path = os.path.join(os.path.dirname(BASE_DIR) , "conf/config.ini")
+config.read(config_path)
+DEBUG = config["default"].getboolean("debug")
+MEDIA_BASE_URL = config["default"]["media_base_url"]
+
+LOGGING = {
+    'version' :1,
+    'disable_existing_loggers' :False,
+    'formatters' :{
+       'verbose' : {
+             'format' : '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'
+       },
+    },
+    'handlers' : {
+       'info_record' : {
+          'level': 'INFO',
+          'class' : 'logging.FileHandler',
+          'filename' : os.path.join(os.path.dirname(BASE_DIR),"log/info.log"),
+          'formatter' : 'verbose'
+       },
+       'error_record' : {
+          'level': 'ERROR',
+          'class' : 'logging.FileHandler',
+          'filename' : os.path.join(os.path.dirname(BASE_DIR),"log/error.log"),
+          'formatter' : 'verbose'
+       },
+   },
+        'loggers' : {
+             'forum' : {
+                   'handers' :["info_record", "error_record"],
+                   'level' :'DEBUG',
+             }
+        }
+}
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.LogExceptionMiddleware',
+
+]
+
 STATIC_URL = '/static/'
 
 EMAIL_USE_SSL = True
