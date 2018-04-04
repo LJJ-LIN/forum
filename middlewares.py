@@ -1,7 +1,7 @@
 import sys
 from django.views.debug import technical_500_response
 from django.conf import settings
-from django.http import HttpResponse
+from django.shortcuts import render
 import logging
 LOGGER = logging.getLogger('forum')
 		
@@ -16,11 +16,6 @@ class LogExceptionMiddleware(object):
 			response = self.get_response(request)
 		except Exception as e:
 			LOGGER.exception(e)
-			return HttpResponse("出错了")
+			return render(request,'404.html')
 		return response
-
-class UserBasedExceptionMiddleware(object):
-	def process_exception(self, request, exception):
-		if request.user.is_superuser or request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS:
-			return technical_500_response(request, *sys.exc_info())
 		
