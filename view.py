@@ -8,6 +8,7 @@ import datetime
 from django.core.mail import send_mail
 from django.utils import timezone
 from message.models import UserMessage
+from userCenter.models import UserProfile
 
 def index(request):
 	block_infos = Block.normal_objects.order_by("-id")
@@ -49,9 +50,12 @@ def  register(request):
 			from_email='672731931@qq.com',
 			recipient_list=[email],
 			fail_silently=False)
+
+			for u in User.objects.all():
+				if not UserProfile.objects.filter(user=u).exists():
+					p = UserProfile(user=u)
+					p.save()
+
 		else:
 			return render(request,"register.html",{"error":error})
 		return render(request,'success_hint.html',{'msg':'注册成功，请前往你的邮箱完成验证!'})
-
-def notfound(request):
-	return render(request,"404.html")

@@ -7,4 +7,5 @@ urlpatterns = [
       url(r'^create/(?P<block_id>\d+)',login_required(ArticleCreateView.as_view())),
       url(r'^articledetail/(?P<pk>\d+)$', ArticleDetailView.as_view()),
       url(r'^articledetail/comment/create/', create_comment),
+      
 ]
